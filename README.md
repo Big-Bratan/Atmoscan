@@ -5,29 +5,6 @@
     Air Quality Control Monitor.
   </p>
 
-
-<!-- Badges -->
-<p>
-  <a href="https://github.com/Big-Bratan/Atmoscan/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/Big-Bratan/Atmoscan" alt="contributors" />
-  </a>
-  <a href="">
-    <img src="https://img.shields.io/github/last-commit/Big-Bratan/Atmoscan" alt="last update" />
-  </a>
-  <a href="https://github.com/Big-Bratan/Atmoscan/network/members">
-    <img src="https://img.shields.io/github/forks/Big-Bratan/Atmoscan" alt="forks" />
-  </a>
-  <a href="https://github.com/Big-Bratan/Atmoscan/stargazers">
-    <img src="https://img.shields.io/github/stars/Big-Bratan/Atmoscan" alt="stars" />
-  </a>
-  <a href="https://github.com/Big-Bratan/Atmoscan/issues/">
-    <img src="https://img.shields.io/github/issues/Big-Bratan/Atmoscan" alt="open issues" />
-  </a>
-  <a href="https://github.com/Big-Bratan/Atmoscan/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/Big-Bratan/Atmoscan.svg" alt="license" />
-  </a>
-</p>
-
 </div>
 
 <br />
@@ -42,7 +19,6 @@
 - [Wiring](#wiring)
 - [Installation](#installation)
 - [Usage](#usage)
-- [License](#license)
 
 </details>
 
@@ -51,7 +27,7 @@
 ## About
 
 <div align="center">
-  <img src="https://placehold.co/600x400?text=Screenshot+here" alt="screenshot" />
+  <img src="./assets/atmoscan.jpg" alt="screenshot" width="350" />
 </div>
 
 Atmoscan is an Arduino-based air quality monitoring system designed to measure and display various environmental
@@ -71,47 +47,57 @@ quality deteriorates to unhealthy levels.
 
 ## Components
 
-### Required Hardware
+### :nut_and_bolt: Hardware
 
 - Arduino Uno
 - DHT11 Temperature & Humidity Sensor
 - MH-Z19 CO2 Sensor
-- PMS5003 Particule Sensor
-- 128*64 OLED Display (I2C)
-- LEDs and Buzzer for alerts
+- SDS011 Particule Sensor
+- 128*64 Display (I2C)
 - Micro SD SPI Reader
+- ElectroCookie Proto Shield
+- Dupont or JST
 
 <!-- Libraries -->
 
-### Libraries Required
-
-This project uses Yarn as package manager
+### :books: Libraries
 
 ```cpp
-  cpp
-#include
-<Wire.h>
-#include
-<SoftwareSerial.h>
-#include
-"MHZ19.h"
-#include
-<dht.h>
+#include <Wire.h>
+#include <SoftwareSerial.h>
+#include "MHZ19.h"
+#include <dht.h>
+#include <SPI.h>
+#include <SD.h>
+#include "SSD1306Ascii.h"
+#include "SSD1306AsciiWire.h"
 ```
 
 <!-- Wiring -->
 
 ## Wiring
 
-[wiring diagrams will go here]
+1. Wiring with Dupont
+2. Soldered using JST
+<div style="display: flex; gap: 20px;">
+  <img src="./assets/atmoscan-wiring.png" alt="wiring" width="48%"/>
+  <img src="./assets/atmoscan-wiring-soldered.png" alt="soldered on shield" width="48%"/>
+</div>
 
-### Pin Connections
-
-- DHT11 → Pin
-- MH-Z19 → Pins 12 (RX), 13 (TX)
-- PMS5003 → Analog Pin
-- OLED Display → I2C (SDA: A4, SCL: A5)
-- SPI reader → Pins
+### :electric_plug: Pin Connections
+| Component           | Pin | Name | Description       |
+|---------------------|-----|------|-------------------|
+| SDS011 (particules) | 2   | TX   | Data transmission |
+|                     | 3   | RX   | Data reception    |
+| MH-Z19 (CO₂)        | 4   | TX   | Data transmission |
+|                     | 5   | RX   | Data reception    |
+| DHT11               | 7   | Data | Digital signal containing temperature & humidity data. |
+| SPI MicroSD Reader  | 10  | CS   | Chip Select: Activates the SD module for SPI communication. |
+|                     | 11  | MOSI | Master Out Slave In: SD card receives data. |
+|                     | 12  | MISO | Master In Slave Out: SD card sends data. |
+|                     | 13  | SCK  | Serial Clock: Synchronizes SPI communication. |
+| Screen              | A3  | SDA  | Serial Data Line: Data line for I2C communication. |
+|                     | A4  | SCK  | Serial Clock Line: Clock line for I2C communication. |
 
 <!-- Installation -->
 
@@ -141,14 +127,44 @@ This project uses Yarn as package manager
 - Particulate Matter (PM2.5)
 - Air Quality Index
 
+### :clipboard: Datasheet
+
+**MH-Z19 CO2 Sensor**
+
+| Indice  | CO₂ (ppm)   | Quality                    |
+|---------|-------------|----------------------------|
+| Normal  | 400 - 1000  | Fresh air                  |
+| Average | 1000 - 2000 | Average - Should ventilate |
+| Bad     | >2000       | Urgent ventilation         |
+
+**SDS011 Particules Sensor**
+
+| Indice    | PM2.5 (µg/m³) | PM10 (µg/m³) | Quality      |
+|-----------|---------------|--------------|--------------|
+| Good      | 0-12          | 0-54         | Clean air    |
+| Moderate  | 13-35         | 55-154       | Ok           |
+| Sensitive | 36-55         | 155-254      | Can irritate sensitive persons |
+| Bad       | 56-150        | 255-354      | Higher risks |
+| Dangerous | >150          | >354         | Poluted |
+
+**DHT11 Temperature & Humidity Sensor**
+
+| Indice      | Normal Range | Quality          |
+|-------------|--------------|------------------|
+| Temperature | 20-25°C      | Optimal comfort  |
+| Humidity    | 40-60%       | Ideal for health |
+
+
+## :raised_hands: Acknowledgments
+- [@AriSky1](https://github.com/AriSky1) - For the project idea
 <!-- Acknowledgments -->
 <!--
-## :gem: Project resources
+## :raised_hands: Acknowledgments
 
 Use this section to mention useful resources and libraries that you have used in your projects.
 
-- [Emoji Cheat Sheet](https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md#travel--places)
-- [Readme Template](https://github.com/othneildrew/Best-README-Template)
+- [MHZ19 Code example](https://esphome.io/components/sensor/mhz19.html)
+- [Similar project with more sensors and display features](https://howtomechatronics.com/projects/diy-air-quality-monitor-pm2-5-co2-voc-ozone-temp-hum-arduino-meter/#h-the-co2-sensor-mh-z19)
 
 ## License
 
